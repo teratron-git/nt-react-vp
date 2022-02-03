@@ -1,6 +1,26 @@
-import { NavLink } from "react-router-dom"
+import React, { useState } from "react"
+import { NavLink, useNavigate } from "react-router-dom"
 
 const Header = () => {
+  const [isSearchExpend, setIsSearchExpend] = useState(false)
+  const [searchInput, setSearchInput] = useState("")
+
+  const navigate = useNavigate()
+
+  const serchInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    setSearchInput(e.target.value)
+  }
+
+  const searchButtonClickHandler = () => {
+    setIsSearchExpend(!isSearchExpend)
+
+    if (searchInput) {
+      setSearchInput("")
+      setIsSearchExpend(false)
+      navigate("/catalog.html")
+    }
+  }
+
   return (
     <header className="container">
       <div className="row">
@@ -34,15 +54,21 @@ const Header = () => {
               </ul>
               <div>
                 <div className="header-controls-pics">
-                  <div data-id="search-expander" className="header-controls-pic header-controls-search" />
-                  {/* <!-- Do programmatic navigation on click to /cart.html -- /> */}
+                  <div
+                    data-id="search-expander"
+                    className="header-controls-pic header-controls-search"
+                    onClick={searchButtonClickHandler}
+                  />
                   <div className="header-controls-pic header-controls-cart">
                     <div className="header-controls-cart-full">1</div>
                     <div className="header-controls-cart-menu" />
                   </div>
                 </div>
-                <form data-id="search-form" className="header-controls-search-form form-inline invisible">
-                  <input className="form-control" placeholder="Поиск" />
+                <form
+                  data-id="search-form"
+                  className={`header-controls-search-form form-inline ${!isSearchExpend && "invisible"}`}
+                >
+                  <input className="form-control" placeholder="Поиск" value={searchInput} onChange={serchInputChangeHandler} />
                 </form>
               </div>
             </div>
