@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { getCatalogAsync, getCatalogMoreAsync, getCategoryAsync, getTopSalesAsync } from "../../../store/mainSlice"
+import * as mainSelector from "../../../store/selectors"
 import { RootState } from "../../../store/store"
 
 const CatalogPage = ({ form = false }) => {
+  const searchText = useSelector(mainSelector.searchText)
+
+  const [searchInput, setSearchInput] = useState("")
   const [offset, setOffset] = useState(6)
   const categoryData = useSelector((state: RootState) => state.main.category.value)
   const catalogData = useSelector((state: RootState) => state.main.catalog.value)
@@ -17,6 +21,10 @@ const CatalogPage = ({ form = false }) => {
   }
 
   useEffect(() => {
+    setSearchInput(searchText)
+  }, [searchText])
+
+  useEffect(() => {
     dispatch(getCategoryAsync())
     dispatch(getTopSalesAsync())
     dispatch(getCatalogAsync())
@@ -28,7 +36,12 @@ const CatalogPage = ({ form = false }) => {
 
       {form && (
         <form className="catalog-search-form form-inline">
-          <input className="form-control" placeholder="Поиск" />
+          <input
+            className="form-control"
+            placeholder="Поиск"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
         </form>
       )}
 

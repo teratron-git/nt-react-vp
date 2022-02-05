@@ -15,6 +15,7 @@ export interface ICategory {
 }
 
 interface IMainState {
+  searchText: string
   topSales: {
     value: ICard[]
     status: "idle" | "loading" | "success" | "error"
@@ -30,6 +31,7 @@ interface IMainState {
 }
 
 const initialState: IMainState = {
+  searchText: "",
   topSales: {
     value: [],
     status: "idle",
@@ -73,9 +75,9 @@ export const mainSlice = createSlice({
   name: "main",
   initialState,
   reducers: {
-    // getCategory: (state, action: PayloadAction<number>) => {
-    //   state.value += action.payload
-    // },
+    changeSeachText: (state, action: PayloadAction<string>) => {
+      state.searchText = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -117,6 +119,6 @@ export const mainSlice = createSlice({
   },
 })
 
-// export const { incrementByAmount } = mainSlice.actions
+export const { changeSeachText } = mainSlice.actions
 
 export default mainSlice.reducer

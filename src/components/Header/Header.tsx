@@ -1,9 +1,16 @@
 import React, { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { NavLink, useNavigate } from "react-router-dom"
+import { changeSeachText } from "../../store/mainSlice"
+import * as mainSelector from "../../store/selectors"
+import { RootState } from "../../store/store"
 
 const Header = () => {
+  const searchText = useSelector(mainSelector.searchText)
+
+  const dispatch = useDispatch()
   const [isSearchExpend, setIsSearchExpend] = useState(false)
-  const [searchInput, setSearchInput] = useState("")
+  const [searchInput, setSearchInput] = useState(searchText)
 
   const navigate = useNavigate()
 
@@ -17,6 +24,7 @@ const Header = () => {
     if (searchInput) {
       setSearchInput("")
       setIsSearchExpend(false)
+      dispatch(changeSeachText(searchInput))
       navigate("/catalog.html")
     }
   }
