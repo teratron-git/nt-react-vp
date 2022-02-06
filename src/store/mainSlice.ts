@@ -9,6 +9,9 @@ export interface ICard {
   price: number
   images: string[]
 }
+
+type IStatus = "idle" | "loading" | "success" | "error"
+
 export interface ICategory {
   id: number
   title: string
@@ -18,15 +21,16 @@ interface IMainState {
   searchText: string
   topSales: {
     value: ICard[]
-    status: "idle" | "loading" | "success" | "error"
+    status: IStatus
   }
   category: {
     value: ICategory[]
-    status: "idle" | "loading" | "success" | "error"
+    status: IStatus
   }
   catalog: {
     value: ICard[]
-    status: "idle" | "loading" | "success" | "error"
+    status: IStatus
+    isFinish: boolean
   }
 }
 
@@ -43,33 +47,38 @@ const initialState: IMainState = {
   catalog: {
     value: [],
     status: "idle",
+    isFinish: false,
   },
 }
 
 export const getCategoryAsync = createAsyncThunk("main/getCategoryAsync", async () => {
   const response = await axios("http://localhost:7070/api/categories")
 
-  // The value we return becomes the `fulfilled` action payload
   return response.data
 })
 
 export const getTopSalesAsync = createAsyncThunk("main/getTopSalesAsync", async () => {
   const response = await axios("http://localhost:7070/api/top-sales")
-  // The value we return becomes the `fulfilled` action payload
+
   return response.data
 })
 
-export const getCatalogAsync = createAsyncThunk("main/getCatalogAsync", async () => {
-  const response = await axios("http://localhost:7070/api/items")
-  // The value we return becomes the `fulfilled` action payload
+export const getCatalogAsync = createAsyncThunk("main/getCatalogAsync", async (categoryId: number) => {
+  const response = await axios(
+    !categoryId ? "http://localhost:7070/api/items" : `http://localhost:7070/api/items?categoryId=${categoryId || 0}`
+  )
+
   return response.data
 })
 
-export const getCatalogMoreAsync = createAsyncThunk("main/getCatalogMoreAsync", async (offset: number) => {
-  const response = await axios(`http://localhost:7070/api/items?offset=${offset}`)
-  // The value we return becomes the `fulfilled` action payload
-  return response.data
-})
+export const getCatalogMoreAsync = createAsyncThunk(
+  "main/getCatalogMoreAsync",
+  async ({ offset, categoryId }: { offset: number; categoryId: number }) => {
+    const response = await axios(`http://localhost:7070/api/items?offset=${offset}&categoryId=${categoryId || 0}`)
+
+    return response.data
+  }
+)
 
 export const mainSlice = createSlice({
   name: "main",
@@ -83,11 +92,13 @@ export const mainSlice = createSlice({
     builder
       .addCase(getCategoryAsync.pending, (state) => {
         state.category.status = "loading"
+        state.category.value = []
       })
       .addCase(getCategoryAsync.fulfilled, (state, action) => {
         console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
         state.category.status = "success"
-        state.category.value = action.payload
+        state.category.value.push({ id: 0, title: "Все" })
+        state.category.value.push(...action.payload)
       })
 
       .addCase(getTopSalesAsync.pending, (state) => {
@@ -100,10 +111,12 @@ export const mainSlice = createSlice({
       })
 
       .addCase(getCatalogAsync.pending, (state) => {
+        state.catalog.value = []
         state.catalog.status = "loading"
       })
       .addCase(getCatalogAsync.fulfilled, (state, action) => {
         console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
+        state.catalog.isFinish = false
         state.catalog.status = "success"
         state.catalog.value = action.payload
       })
@@ -114,6 +127,8 @@ export const mainSlice = createSlice({
       .addCase(getCatalogMoreAsync.fulfilled, (state, action) => {
         console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
         state.catalog.status = "success"
+        state.catalog.isFinish = action.payload.length !== 6
+        console.log("🚀 ~ file: mainSlice.ts ~ line 120 ~ .addCase ~ action.payload.length", action.payload.length !== 6)
         state.catalog.value.push(...action.payload)
       })
   },

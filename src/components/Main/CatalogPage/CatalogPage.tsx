@@ -1,24 +1,39 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { Link, NavLink } from "react-router-dom"
 import { getCatalogAsync, getCatalogMoreAsync, getCategoryAsync, getTopSalesAsync } from "../../../store/mainSlice"
 import * as mainSelector from "../../../store/selectors"
+import { searchText } from "../../../store/selectors"
 import { RootState } from "../../../store/store"
 
 const CatalogPage = ({ form = false }) => {
   const searchText = useSelector(mainSelector.searchText)
+  const categoryData = useSelector((state: RootState) => state.main.category.value)
+  console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ categoryData", categoryData)
+  const catalogData = useSelector((state: RootState) => state.main.catalog.value)
+  console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ catalogData", catalogData)
+  const catalogIsFinish = useSelector((state: RootState) => state.main.catalog.isFinish)
+
+  const [currentCategory, setCurrentCategory] = useState({ id: 0, title: "Все" })
+  console.log("🚀 ~ file: CatalogPage.tsx ~ line 17 ~ CatalogPage ~ currentCategory", currentCategory)
+  const [targetCategory, setTargetCategory] = useState(null)
+  console.log("🚀 ~ file: CatalogPage.tsx ~ line 18 ~ CatalogPage ~ targetCategory", targetCategory)
 
   const [searchInput, setSearchInput] = useState("")
   const [offset, setOffset] = useState(6)
-  const categoryData = useSelector((state: RootState) => state.main.category.value)
-  const catalogData = useSelector((state: RootState) => state.main.catalog.value)
-  console.log("🚀 ~ file: CatalogPage.tsx ~ line 7 ~ categoryData ~ data", categoryData)
 
   const dispatch = useDispatch()
 
-  const moreClickHandler = () => {
-    dispatch(getCatalogMoreAsync(offset))
+  const moreClickHandler = (e: any) => {
+    e.preventDefault()
+    dispatch(getCatalogMoreAsync({ offset, categoryId: currentCategory.id }))
     setOffset((prev) => prev + 6)
   }
+
+  useEffect(() => {
+    dispatch(getCatalogAsync(currentCategory.id))
+    setOffset(6)
+  }, [currentCategory])
 
   useEffect(() => {
     setSearchInput(searchText)
@@ -27,8 +42,15 @@ const CatalogPage = ({ form = false }) => {
   useEffect(() => {
     dispatch(getCategoryAsync())
     dispatch(getTopSalesAsync())
-    dispatch(getCatalogAsync())
+    dispatch(getCatalogAsync(currentCategory.id))
   }, [])
+
+  const categoryClickHandler: React.EventHandler<any> = (e) => {
+    const categoryId = categoryData.find((item) => item?.title === e.target?.innerText)
+    console.log("🚀 ~ file: CatalogPage.tsx ~ line 47 ~ CatalogPage ~ e.target.innerText", e.target?.innerText)
+    setCurrentCategory(categoryId)
+    setTargetCategory(e.target?.innerText)
+  }
 
   return (
     <section className="catalog">
@@ -46,31 +68,17 @@ const CatalogPage = ({ form = false }) => {
       )}
 
       <ul className="catalog-categories nav justify-content-center">
-        <li className="nav-item">
-          <a className="nav-link active" href="#">
-            Все
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" href="#">
-            Женская обувь
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" href="#">
-            Мужская обувь
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" href="#">
-            Обувь унисекс
-          </a>
-        </li>
-        <li className="nav-item">
-          <a className="nav-link" href="#">
-            Детская обувь
-          </a>
-        </li>
+        {categoryData.map((item) => (
+          <li className="nav-item" key={item.id}>
+            <Link
+              to=""
+              className={item.title === currentCategory.title ? "nav-link active" : "nav-link"}
+              onClick={categoryClickHandler}
+            >
+              {item.title}
+            </Link>
+          </li>
+        ))}
       </ul>
       <div className="row">
         {catalogData.map((item) => (
@@ -97,9 +105,11 @@ const CatalogPage = ({ form = false }) => {
         ))}
       </div>
       <div className="text-center">
-        <button type="button" className="btn btn-outline-primary" onClick={moreClickHandler}>
-          Загрузить ещё
-        </button>
+        {!catalogIsFinish ? (
+          <button type="button" className="btn btn-outline-primary" onClick={moreClickHandler}>
+            Загрузить ещё
+          </button>
+        ) : null}
       </div>
     </section>
   )
