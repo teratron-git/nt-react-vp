@@ -18,7 +18,8 @@ const Header = () => {
     setSearchInput(e.target.value)
   }
 
-  const searchButtonClickHandler = () => {
+  const searchButtonClickHandler = (e: any) => {
+    e.preventDefault()
     setIsSearchExpend(!isSearchExpend)
 
     if (searchInput) {
@@ -75,6 +76,7 @@ const Header = () => {
                 <form
                   data-id="search-form"
                   className={`header-controls-search-form form-inline ${!isSearchExpend && "invisible"}`}
+                  onSubmit={searchButtonClickHandler}
                 >
                   <input className="form-control" placeholder="Поиск" value={searchInput} onChange={serchInputChangeHandler} />
                 </form>

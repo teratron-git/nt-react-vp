@@ -63,9 +63,13 @@ export const getTopSalesAsync = createAsyncThunk("main/getTopSalesAsync", async 
   return response.data
 })
 
-export const getCatalogAsync = createAsyncThunk("main/getCatalogAsync", async (categoryId: number) => {
+export const getCatalogAsync = createAsyncThunk("main/getCatalogAsync", async (categoryId: number, { getState }) => {
+  const { searchText } = (getState() as RootState).main
+
   const response = await axios(
-    !categoryId ? "http://localhost:7070/api/items" : `http://localhost:7070/api/items?categoryId=${categoryId || 0}`
+    !categoryId
+      ? `http://localhost:7070/api/items?q=${searchText}`
+      : `http://localhost:7070/api/items?categoryId=${categoryId}&q=${searchText}`
   )
 
   return response.data
@@ -73,8 +77,10 @@ export const getCatalogAsync = createAsyncThunk("main/getCatalogAsync", async (c
 
 export const getCatalogMoreAsync = createAsyncThunk(
   "main/getCatalogMoreAsync",
-  async ({ offset, categoryId }: { offset: number; categoryId: number }) => {
-    const response = await axios(`http://localhost:7070/api/items?offset=${offset}&categoryId=${categoryId || 0}`)
+  async ({ offset, categoryId }: { offset: number; categoryId: number }, { getState }) => {
+    const { searchText } = (getState() as RootState).main
+
+    const response = await axios(`http://localhost:7070/api/items?offset=${offset}&categoryId=${categoryId}&q=${searchText}`)
 
     return response.data
   }

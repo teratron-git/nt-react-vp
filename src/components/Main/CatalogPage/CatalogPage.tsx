@@ -1,25 +1,30 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Link, NavLink } from "react-router-dom"
-import { getCatalogAsync, getCatalogMoreAsync, getCategoryAsync, getTopSalesAsync } from "../../../store/mainSlice"
+import { Link } from "react-router-dom"
+import {
+  changeSeachText,
+  getCatalogAsync,
+  getCatalogMoreAsync,
+  getCategoryAsync,
+  getTopSalesAsync,
+} from "../../../store/mainSlice"
 import * as mainSelector from "../../../store/selectors"
-import { searchText } from "../../../store/selectors"
 import { RootState } from "../../../store/store"
 
 const CatalogPage = ({ form = false }) => {
   const searchText = useSelector(mainSelector.searchText)
   const categoryData = useSelector((state: RootState) => state.main.category.value)
-  console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ categoryData", categoryData)
+  // console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ categoryData", categoryData)
   const catalogData = useSelector((state: RootState) => state.main.catalog.value)
-  console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ catalogData", catalogData)
+  // console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ catalogData", catalogData)
   const catalogIsFinish = useSelector((state: RootState) => state.main.catalog.isFinish)
 
   const [currentCategory, setCurrentCategory] = useState({ id: 0, title: "Все" })
-  console.log("🚀 ~ file: CatalogPage.tsx ~ line 17 ~ CatalogPage ~ currentCategory", currentCategory)
+  // console.log("🚀 ~ file: CatalogPage.tsx ~ line 17 ~ CatalogPage ~ currentCategory", currentCategory)
   const [targetCategory, setTargetCategory] = useState(null)
-  console.log("🚀 ~ file: CatalogPage.tsx ~ line 18 ~ CatalogPage ~ targetCategory", targetCategory)
+  // console.log("🚀 ~ file: CatalogPage.tsx ~ line 18 ~ CatalogPage ~ targetCategory", targetCategory)
 
-  const [searchInput, setSearchInput] = useState("")
+  const [searchInput, setSearchInput] = useState(searchText)
   const [offset, setOffset] = useState(6)
 
   const dispatch = useDispatch()
@@ -37,6 +42,8 @@ const CatalogPage = ({ form = false }) => {
 
   useEffect(() => {
     setSearchInput(searchText)
+
+    dispatch(getCatalogAsync(currentCategory.id))
   }, [searchText])
 
   useEffect(() => {
@@ -57,7 +64,14 @@ const CatalogPage = ({ form = false }) => {
       <h2 className="text-center">Каталог</h2>
 
       {form && (
-        <form className="catalog-search-form form-inline">
+        <form
+          className="catalog-search-form form-inline"
+          onSubmit={(e) => {
+            e.preventDefault()
+            // setSearchInput
+            dispatch(changeSeachText(searchInput))
+          }}
+        >
           <input
             className="form-control"
             placeholder="Поиск"
