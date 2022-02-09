@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Link } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import {
   changeSeachText,
   getCatalogAsync,
@@ -110,9 +110,9 @@ const CatalogPage = ({ form = false }) => {
               <div className="card-body">
                 <p className="card-text">{item.title}</p>
                 <p className="card-text">{item.price}</p>
-                <a href="/products/1.html" className="btn btn-outline-primary">
+                <NavLink to={`/products/${item.id}.html`} className="btn btn-outline-primary">
                   Заказать
-                </a>
+                </NavLink>
               </div>
             </div>
           </div>

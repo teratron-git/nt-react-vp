@@ -1,5 +1,6 @@
 import React from "react"
 import { useSelector } from "react-redux"
+import { Link, NavLink } from "react-router-dom"
 import { RootState } from "../../../store/store"
 
 const TopSales = () => {
@@ -18,9 +19,9 @@ const TopSales = () => {
               <div className="card-body">
                 <p className="card-text">{item.title}</p>
                 <p className="card-text">{item.price}</p>
-                <a href="/products/1.html" className="btn btn-outline-primary">
+                <NavLink to={`/products/${item.id}.html`} className="btn btn-outline-primary">
                   Заказать
-                </a>
+                </NavLink>
               </div>
             </div>
           </div>

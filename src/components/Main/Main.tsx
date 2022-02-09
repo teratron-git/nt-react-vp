@@ -1,8 +1,10 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import AboutPage from "./AboutPage"
+import CartPage from "./CartPage"
 import CatalogPage from "./CatalogPage"
 import ContactsPage from "./ContactsPage"
 import Page404 from "./Page404"
+import ProductInfoPage from "./ProductInfoPage"
 import TopSales from "./TopSales/TopSales"
 
 const Main = () => {
@@ -27,6 +29,8 @@ const Main = () => {
             <Route path="/about.html" element={<AboutPage />} />
             <Route path="/catalog.html" element={<CatalogPage form />} />
             <Route path="/contacts.html" element={<ContactsPage />} />
+            <Route path="/cart.html" element={<CartPage />} />
+            <Route path="/products/:id.html" element={<ProductInfoPage />} />
             <Route path="/404.html" element={<Page404 />} />
             <Route path="*" element={<Navigate replace to="/404.html" />} />
           </Routes>
