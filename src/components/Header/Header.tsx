@@ -39,7 +39,7 @@ const Header = () => {
         <div className="col">
           <nav className="navbar navbar-expand-sm navbar-light bg-light">
             <NavLink className="navbar-brand" to="/">
-              <img src="./img/header-logo.png" alt="BosNavLink Noga" />
+              <img src="/img/header-logo.png" alt="BosNavLink Noga" />
             </NavLink>
             <div className="collapase navbar-collapse" id="navbarMain">
               <ul className="navbar-nav mr-auto">
