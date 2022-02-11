@@ -1,12 +1,20 @@
-import React, { useState } from "react"
-import { useSelector } from "react-redux"
+import React, { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { getProductInfoById } from "../../../store/mainSlice"
 import * as mainSelector from "../../../store/selectors"
 
 const ProductInfoPage = () => {
+  const dispatch = useDispatch()
+  const productId = useParams()
   const productInfo = useSelector(mainSelector.productInfo)
 
   const [amount, setAmount] = useState(1)
   const [selectedSize, setSelectedSize] = useState("")
+
+  useEffect(() => {
+    dispatch(getProductInfoById(+productId.id))
+  }, [])
 
   const incrementHandler = () => {
     setAmount((prevAmount) => (prevAmount < 10 ? prevAmount + 1 : prevAmount))
@@ -24,41 +32,41 @@ const ProductInfoPage = () => {
     setSelectedSize(size)
   }
 
-  const isAvaliableSizes = productInfo.sizes.find((item) => item.avalible === true)
+  const isAvaliableSizes = productInfo?.sizes.find((item) => item.avalible === true)
 
   return (
     <section className="catalog-item">
-      <h2 className="text-center">{productInfo.title}</h2>
+      <h2 className="text-center">{productInfo?.title}</h2>
       <div className="row">
         <div className="col-5">
-          <img src={productInfo.images[0]} className="img-fluid" alt="" />
+          <img src={productInfo?.images[0]} className="img-fluid" alt="" />
         </div>
         <div className="col-7">
           <table className="table table-bordered">
             <tbody>
               <tr>
                 <td>Артикул</td>
-                <td>{productInfo.sku}</td>
+                <td>{productInfo?.sku}</td>
               </tr>
               <tr>
                 <td>Производитель</td>
-                <td>{productInfo.manufacturer}</td>
+                <td>{productInfo?.manufacturer}</td>
               </tr>
               <tr>
                 <td>Цвет</td>
-                <td>{productInfo.color}</td>
+                <td>{productInfo?.color}</td>
               </tr>
               <tr>
                 <td>Материалы</td>
-                <td>{productInfo.material}</td>
+                <td>{productInfo?.material}</td>
               </tr>
               <tr>
                 <td>Сезон</td>
-                <td>{productInfo.season}</td>
+                <td>{productInfo?.season}</td>
               </tr>
               <tr>
                 <td>Повод</td>
-                <td>{productInfo.reason}</td>
+                <td>{productInfo?.reason}</td>
               </tr>
             </tbody>
           </table>

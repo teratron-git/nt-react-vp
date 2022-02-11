@@ -33,20 +33,23 @@ interface IMainState {
     isFinish: boolean
   }
   productInfo: {
-    id: number
-    category: number
-    title: string
-    images: Array<string>
-    sku: string
-    manufacturer: string
-    color: string
-    material: string
-    reason: string
-    season: string
-    heelSize: string
-    price: number
-    oldPrice: number
-    sizes: Array<{ size: string; avalible: boolean }>
+    value: {
+      id: number
+      category: number
+      title: string
+      images: Array<string>
+      sku: string
+      manufacturer: string
+      color: string
+      material: string
+      reason: string
+      season: string
+      heelSize: string
+      price: number
+      oldPrice: number
+      sizes: Array<{ size: string; avalible: boolean }>
+    }
+    status: IStatus
   }
 }
 
@@ -66,27 +69,8 @@ const initialState: IMainState = {
     isFinish: false,
   },
   productInfo: {
-    id: 65,
-    category: 15,
-    title: "Босоножки 'Keira'",
-    images: [
-      "https://raw.githubusercontent.com/netology-code/ra16-diploma/master/html/img/products/sandals_keira.jpg",
-      "https://raw.githubusercontent.com/netology-code/ra16-diploma/master/html/img/products/sandals_keira_2.jpg",
-    ],
-    sku: "1000045",
-    manufacturer: "DOLCE & GABBANA",
-    color: "Разноцветные",
-    material: "Кожа",
-    reason: "Прогулка",
-    season: "Лето",
-    heelSize: "3 см.",
-    price: 7600,
-    oldPrice: 12000,
-    sizes: [
-      { size: "14 US", avalible: false },
-      { size: "18 US", avalible: false },
-      { size: "20 US", avalible: false },
-    ],
+    value: null,
+    status: "idle",
   },
 }
 
@@ -184,14 +168,15 @@ export const mainSlice = createSlice({
       })
 
       .addCase(getProductInfoById.pending, (state) => {
-        state.catalog.status = "loading"
+        state.productInfo.status = "loading"
+        state.productInfo.value = null
       })
       .addCase(getProductInfoById.fulfilled, (state, action) => {
         // console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
-        state.catalog.status = "success"
-        state.catalog.isFinish = action.payload.length !== 6
+        state.productInfo.status = "success"
+
         // console.log("🚀 ~ file: mainSlice.ts ~ line 120 ~ .addCase ~ action.payload.length", action.payload.length !== 6)
-        state.catalog.value.push(...action.payload)
+        state.productInfo.value = { ...action.payload }
       })
   },
 })
