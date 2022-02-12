@@ -1,4 +1,5 @@
 import { RootState } from "./store"
 
-export const searchText = (state: RootState) => state.main.searchText
-export const productInfo = (state: RootState) => state.main.productInfo.value
+export const getSearchText = (state: RootState) => state.main.searchText
+export const getCountOrders = (state: RootState) => state.main.countOrders
+export const getProductInfo = (state: RootState) => state.main.productInfo.value

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { getProductInfoById } from "../../../store/mainSlice"
+import { getCountOrders, getProductInfoById, IProductInfoForCart } from "../../../store/mainSlice"
 import * as mainSelector from "../../../store/selectors"
 
 const ProductInfoPage = () => {
   const dispatch = useDispatch()
   const productId = useParams()
-  const productInfo = useSelector(mainSelector.productInfo)
+  const navigate = useNavigate()
+  const productInfo: IProductInfoForCart = useSelector(mainSelector.getProductInfo)
 
   const [amount, setAmount] = useState(1)
   const [selectedSize, setSelectedSize] = useState("")
@@ -25,7 +26,20 @@ const ProductInfoPage = () => {
   }
 
   const addToCartClickHandler = () => {
-    // setAmount((prevAmount) => prevAmount - 1)
+    const currentOrder: Array<IProductInfoForCart> = JSON.parse(localStorage.getItem("order")) || []
+    // console.log("🚀 ~ file: ProductInfoPage.tsx ~ line 30 ~ addToCartClickHandler ~ currentOrder", currentOrder)
+
+    const foundIndex = currentOrder.findIndex((item) => item.title === productInfo.title && item.size === selectedSize)
+
+    if (foundIndex == -1) {
+      currentOrder.push({ ...productInfo, amount, size: selectedSize })
+    } else {
+      currentOrder[foundIndex].amount += amount
+    }
+
+    localStorage.setItem("order", JSON.stringify(currentOrder))
+    dispatch(getCountOrders(JSON.parse(localStorage.getItem("order")).length))
+    navigate("/cart.html")
   }
 
   const sizeSelectionHandler = (size: string) => {

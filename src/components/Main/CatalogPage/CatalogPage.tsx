@@ -12,7 +12,7 @@ import * as mainSelector from "../../../store/selectors"
 import { RootState } from "../../../store/store"
 
 const CatalogPage = ({ form = false }) => {
-  const searchText = useSelector(mainSelector.searchText)
+  const searchText = useSelector(mainSelector.getSearchText)
   const categoryData = useSelector((state: RootState) => state.main.category.value)
   // console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ categoryData", categoryData)
   const catalogData = useSelector((state: RootState) => state.main.catalog.value)

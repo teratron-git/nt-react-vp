@@ -1,6 +1,22 @@
+import { useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
+import { getCountOrders, IProductInfoForCart } from "../../../store/mainSlice"
 import Order from "./Order"
 
 const CartPage = () => {
+  const [order, setOrder] = useState<Array<IProductInfoForCart>>(JSON.parse(localStorage.getItem("order")) || [])
+  const dispatch = useDispatch()
+
+  const deleteHandler = (id: number) => {
+    const currentLocalStorage = JSON.parse(localStorage.getItem("order"))
+    const newArr = currentLocalStorage.filter((item: IProductInfoForCart) => item.id !== id)
+
+    localStorage.removeItem("order")
+    localStorage.setItem("order", JSON.stringify(newArr))
+    setOrder(newArr)
+    dispatch(getCountOrders(JSON.parse(localStorage.getItem("order")).length))
+  }
+
   return (
     <>
       <section className="cart">
@@ -18,26 +34,31 @@ const CartPage = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>
-                <a href="/products/1.html">Босоножки 'MYER'</a>
-              </td>
-              <td>18 US</td>
-              <td>1</td>
-              <td>34 000 руб.</td>
-              <td>34 000 руб.</td>
-              <td>
-                <button type="button" className="btn btn-outline-danger btn-sm">
-                  Удалить
-                </button>
-              </td>
-            </tr>
+            {order.map((item, i) => {
+              return (
+                <tr key={`${item.title} - ${item.size}`}>
+                  <th scope="row">{i + 1}</th>
+                  <td>
+                    <a href={`/products/${item.id}.html`}>{item.title}</a>
+                  </td>
+                  <td>{item.size}</td>
+                  <td>{item.amount}</td>
+                  <td>{item.price}</td>
+                  <td>{item.price * item.amount}</td>
+                  <td>
+                    <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => deleteHandler(item.id)}>
+                      Удалить
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
+
             <tr>
               <td colSpan={5} className="text-right">
                 Общая стоимость
               </td>
-              <td>34 000 руб.</td>
+              <td>{order.reduce((result, curr) => result + curr.price * curr.amount, 0)}</td>
             </tr>
           </tbody>
         </table>

@@ -16,9 +16,36 @@ export interface ICategory {
   id: number
   title: string
 }
+export interface IProductInfoValue {
+  id: number
+  category: number
+  title: string
+  images: Array<string>
+  sku: string
+  manufacturer: string
+  color: string
+  material: string
+  reason: string
+  season: string
+  heelSize: string
+  price: number
+  oldPrice: number
+  sizes: Array<{ size: string; avalible: boolean }>
+}
+
+export interface IProductInfo {
+  value: IProductInfoValue
+  status: IStatus
+}
+
+export interface IProductInfoForCart extends IProductInfoValue {
+  amount?: number
+  size?: string
+}
 
 interface IMainState {
   searchText: string
+  countOrders: string
   topSales: {
     value: ICard[]
     status: IStatus
@@ -32,29 +59,16 @@ interface IMainState {
     status: IStatus
     isFinish: boolean
   }
-  productInfo: {
-    value: {
-      id: number
-      category: number
-      title: string
-      images: Array<string>
-      sku: string
-      manufacturer: string
-      color: string
-      material: string
-      reason: string
-      season: string
-      heelSize: string
-      price: number
-      oldPrice: number
-      sizes: Array<{ size: string; avalible: boolean }>
-    }
+  productInfo: IProductInfo
+  order: {
+    value: any
     status: IStatus
   }
 }
 
 const initialState: IMainState = {
   searchText: "",
+  countOrders: null,
   topSales: {
     value: [],
     status: "idle",
@@ -69,6 +83,10 @@ const initialState: IMainState = {
     isFinish: false,
   },
   productInfo: {
+    value: null,
+    status: "idle",
+  },
+  order: {
     value: null,
     status: "idle",
   },
@@ -115,12 +133,22 @@ export const getProductInfoById = createAsyncThunk("main/getProductInfoById", as
   return response.data
 })
 
+export const setOrder = createAsyncThunk("main/setOrder", async (body: any) => {
+  axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*"
+  const response = await axios.post(`http://localhost:7070/api/order`, body)
+
+  return response.data
+})
+
 export const mainSlice = createSlice({
   name: "main",
   initialState,
   reducers: {
     changeSeachText: (state, action: PayloadAction<string>) => {
       state.searchText = action.payload
+    },
+    getCountOrders: (state, action: PayloadAction<string>) => {
+      state.countOrders = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -130,7 +158,6 @@ export const mainSlice = createSlice({
         state.category.value = []
       })
       .addCase(getCategoryAsync.fulfilled, (state, action) => {
-        // console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
         state.category.status = "success"
         state.category.value.push({ id: 0, title: "Все" })
         state.category.value.push(...action.payload)
@@ -140,7 +167,6 @@ export const mainSlice = createSlice({
         state.topSales.status = "loading"
       })
       .addCase(getTopSalesAsync.fulfilled, (state, action) => {
-        // console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
         state.topSales.status = "success"
         state.topSales.value = action.payload
       })
@@ -150,7 +176,6 @@ export const mainSlice = createSlice({
         state.catalog.status = "loading"
       })
       .addCase(getCatalogAsync.fulfilled, (state, action) => {
-        // console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
         state.catalog.isFinish = false
         state.catalog.status = "success"
         state.catalog.value = action.payload
@@ -160,10 +185,8 @@ export const mainSlice = createSlice({
         state.catalog.status = "loading"
       })
       .addCase(getCatalogMoreAsync.fulfilled, (state, action) => {
-        // console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
         state.catalog.status = "success"
         state.catalog.isFinish = action.payload.length !== 6
-        // console.log("🚀 ~ file: mainSlice.ts ~ line 120 ~ .addCase ~ action.payload.length", action.payload.length !== 6)
         state.catalog.value.push(...action.payload)
       })
 
@@ -172,15 +195,21 @@ export const mainSlice = createSlice({
         state.productInfo.value = null
       })
       .addCase(getProductInfoById.fulfilled, (state, action) => {
-        // console.log("🚀 ~ file: mainSlice.ts ~ line 171 ~ .addCase ~ action", action)
         state.productInfo.status = "success"
-
-        // console.log("🚀 ~ file: mainSlice.ts ~ line 120 ~ .addCase ~ action.payload.length", action.payload.length !== 6)
         state.productInfo.value = { ...action.payload }
+      })
+
+      .addCase(setOrder.pending, (state) => {
+        state.order.status = "loading"
+        state.order.value = null
+      })
+      .addCase(setOrder.fulfilled, (state, action) => {
+        state.order.status = "success"
+        state.order.value = { ...action.payload }
       })
   },
 })
 
-export const { changeSeachText } = mainSlice.actions
+export const { changeSeachText, getCountOrders } = mainSlice.actions
 
 export default mainSlice.reducer
