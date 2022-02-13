@@ -1,14 +1,33 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { Link, NavLink } from "react-router-dom"
+import * as mainSelector from "../../../store/selectors"
 import { RootState } from "../../../store/store"
+import Preloader from "../Preloader"
 
 const TopSales = () => {
-  const data = useSelector((state: RootState) => state.main.topSales.value)
+  const getTopSalesValue = useSelector(mainSelector.getTopSalesValue)
+  const getTopSalesStatus = useSelector(mainSelector.getTopSalesStatus)
 
-  console.log("🚀 ~ file: TopSales.tsx ~ line 6 ~ TopSales ~ data", data)
+  const [status, setStatus] = useState(getTopSalesStatus)
+  const [data, setData] = useState(getTopSalesValue)
 
-  return data.length ? (
+  useEffect(() => {
+    setStatus(getTopSalesStatus)
+  }, [getTopSalesStatus])
+
+  useEffect(() => {
+    setData(getTopSalesValue)
+  }, [getTopSalesValue])
+
+  return status === "loading" ? (
+    <>
+      <section className="top-sales">
+        <h2 className="text-center">Хиты продаж!</h2>
+      </section>
+      <Preloader />
+    </>
+  ) : data.length ? (
     <section className="top-sales">
       <h2 className="text-center">Хиты продаж!</h2>
       <div className="row">

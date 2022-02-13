@@ -16,7 +16,7 @@ const Header = () => {
   const [countOrders, setCountOrders] = useState(getCountOrders)
 
   useEffect(() => {
-    setCountOrders(JSON.parse(localStorage.getItem("order")).length)
+    setCountOrders(JSON.parse(localStorage.getItem("order"))?.length)
   }, [getCountOrders])
 
   const serchInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { getCountOrders, getProductInfoById, IProductInfoForCart } from "../../../store/mainSlice"
+import { changeCountOrders, getProductInfoById, IProductInfoForCart } from "../../../store/mainSlice"
 import * as mainSelector from "../../../store/selectors"
 
 const ProductInfoPage = () => {
@@ -38,7 +38,7 @@ const ProductInfoPage = () => {
     }
 
     localStorage.setItem("order", JSON.stringify(currentOrder))
-    dispatch(getCountOrders(JSON.parse(localStorage.getItem("order")).length))
+    dispatch(changeCountOrders(JSON.parse(localStorage.getItem("order")).length))
     navigate("/cart.html")
   }
 

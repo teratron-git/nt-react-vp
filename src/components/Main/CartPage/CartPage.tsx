@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
-import { getCountOrders, IProductInfoForCart } from "../../../store/mainSlice"
+import { useDispatch, useSelector } from "react-redux"
+import { changeCountOrders, IProductInfoForCart } from "../../../store/mainSlice"
+import * as mainSelector from "../../../store/selectors"
 import Order from "./Order"
 
 const CartPage = () => {
+  const getCountOrders = useSelector(mainSelector.getCountOrders)
+  console.log("🚀 ~ file: CartPage.tsx ~ line 9 ~ CartPage ~ getCountOrders!!!!!!!!!!!!!!!!!!!!!!!!!!", getCountOrders)
   const [order, setOrder] = useState<Array<IProductInfoForCart>>(JSON.parse(localStorage.getItem("order")) || [])
   const dispatch = useDispatch()
 
@@ -14,8 +17,12 @@ const CartPage = () => {
     localStorage.removeItem("order")
     localStorage.setItem("order", JSON.stringify(newArr))
     setOrder(newArr)
-    dispatch(getCountOrders(JSON.parse(localStorage.getItem("order")).length))
+    dispatch(changeCountOrders(JSON.parse(localStorage.getItem("order")).length))
   }
+
+  useEffect(() => {
+    getCountOrders === "0" && setOrder([])
+  }, [getCountOrders])
 
   return (
     <>

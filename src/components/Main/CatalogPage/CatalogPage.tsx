@@ -13,21 +13,33 @@ import { RootState } from "../../../store/store"
 
 const CatalogPage = ({ form = false }) => {
   const searchText = useSelector(mainSelector.getSearchText)
-  const categoryData = useSelector((state: RootState) => state.main.category.value)
-  // console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ categoryData", categoryData)
-  const catalogData = useSelector((state: RootState) => state.main.catalog.value)
-  // console.log("🚀 ~ file: CatalogPage.tsx ~ line 12 ~ CatalogPage ~ catalogData", catalogData)
-  const catalogIsFinish = useSelector((state: RootState) => state.main.catalog.isFinish)
+
+  const getCategoryValue = useSelector(mainSelector.getCategoryValue)
+  const getTopSalesStatus = useSelector(mainSelector.getTopSalesStatus)
+
+  const getCatalogValue = useSelector(mainSelector.getCatalogValue)
+  const getCatalogStatus = useSelector(mainSelector.getCatalogStatus)
+  const getCatalogIsFinish = useSelector(mainSelector.getCatalogIsFinish)
 
   const [currentCategory, setCurrentCategory] = useState({ id: 0, title: "Все" })
-  // console.log("🚀 ~ file: CatalogPage.tsx ~ line 17 ~ CatalogPage ~ currentCategory", currentCategory)
   const [targetCategory, setTargetCategory] = useState(null)
-  // console.log("🚀 ~ file: CatalogPage.tsx ~ line 18 ~ CatalogPage ~ targetCategory", targetCategory)
 
   const [searchInput, setSearchInput] = useState(searchText)
   const [offset, setOffset] = useState(6)
 
   const dispatch = useDispatch()
+
+  const [status, setStatus] = useState(getTopSalesStatus)
+  const [catalogData, setCatalogData] = useState(getCatalogValue)
+  const [categoryData, setcategoryData] = useState(getCategoryValue)
+
+  // useEffect(() => {
+  //   setStatus(getTopSalesStatus)
+  // }, [getTopSalesStatus])
+
+  // useEffect(() => {
+  //   setData(getTopSalesValue)
+  // }, [getTopSalesValue])
 
   const moreClickHandler = (e: any) => {
     e.preventDefault()
@@ -53,7 +65,7 @@ const CatalogPage = ({ form = false }) => {
   }, [])
 
   const categoryClickHandler: React.EventHandler<any> = (e) => {
-    const categoryId = categoryData.find((item) => item?.title === e.target?.innerText)
+    const categoryId = getCategoryValue.find((item) => item?.title === e.target?.innerText)
     console.log("🚀 ~ file: CatalogPage.tsx ~ line 47 ~ CatalogPage ~ e.target.innerText", e.target?.innerText)
     setCurrentCategory(categoryId)
     setTargetCategory(e.target?.innerText)
@@ -82,7 +94,7 @@ const CatalogPage = ({ form = false }) => {
       )}
 
       <ul className="catalog-categories nav justify-content-center">
-        {categoryData.map((item) => (
+        {getCategoryValue.map((item) => (
           <li className="nav-item" key={item.id}>
             <Link
               to=""
@@ -95,7 +107,7 @@ const CatalogPage = ({ form = false }) => {
         ))}
       </ul>
       <div className="row">
-        {catalogData.map((item) => (
+        {getCatalogValue.map((item) => (
           <div className="col-4" key={item.id}>
             <div className="card catalog-item-card">
               <img
@@ -119,7 +131,7 @@ const CatalogPage = ({ form = false }) => {
         ))}
       </div>
       <div className="text-center">
-        {!catalogIsFinish ? (
+        {!getCatalogIsFinish ? (
           <button type="button" className="btn btn-outline-primary" onClick={moreClickHandler}>
             Загрузить ещё
           </button>
