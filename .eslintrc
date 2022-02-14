@@ -61,7 +61,7 @@
     "new-cap": "warn",
     "consistent-return": "off",
     "global-require": "off",
-    "jsx-a11y/anchor-is-valid": "warn",
+    "jsx-a11y/anchor-is-valid": "off",
     "react/no-string-refs": "warn",
     "no-useless-concat": "warn",
     "react/no-find-dom-node": "warn",
