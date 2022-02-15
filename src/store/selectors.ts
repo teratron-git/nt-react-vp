@@ -14,3 +14,4 @@ export const getCatalogStatus = (state: RootState) => state.main.catalog.status
 export const getCatalogIsFinish = (state: RootState) => state.main.catalog.isFinish
 
 export const getCategoryValue = (state: RootState) => state.main.category.value
+export const getCategoryStatus = (state: RootState) => state.main.category.status

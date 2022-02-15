@@ -78,7 +78,8 @@
     "react/function-component-definition": ["warn", { "namedComponents": "arrow-function" }],
     "no-restricted-exports": "off",
     "react/no-unused-prop-types": "warn",
-    "no-promise-executor-return": "warn"
+    "no-promise-executor-return": "warn",
+    "react/require-default-props": "warn"
   },
   "ignorePatterns": ["build/"]
 }

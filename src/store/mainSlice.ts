@@ -10,7 +10,7 @@ export interface ICard {
   images: string[]
 }
 
-type IStatus = "idle" | "loading" | "success" | "error"
+export type IStatus = "idle" | "loading" | "success" | "error"
 
 export interface ICategory {
   id: number
@@ -192,6 +192,7 @@ export const mainSlice = createSlice({
       .addCase(getCatalogAsync.fulfilled, (state, action: PayloadAction<Array<ICard>>) => {
         state.catalog.status = "success"
         state.catalog.isFinish = false
+        state.catalog.isFinish = action.payload.length !== 6
         state.catalog.value = action.payload
       })
 
