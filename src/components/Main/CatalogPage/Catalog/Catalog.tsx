@@ -6,7 +6,6 @@ import {
   getCatalogAsync,
   getCatalogMoreAsync,
   getCategoryAsync,
-  getTopSalesAsync,
   ICard,
   ICategory,
   IStatus,
@@ -25,19 +24,19 @@ interface IProps {
   form?: boolean
 }
 
-const Catalog = ({
-  form = false,
-  catalogStatus,
-  catalogData,
-  categoryStatus,
-  categoryData,
-  isCatalogFinish,
-  searchText,
-}: IProps) => {
+const Catalog = ({ form = false }) => {
   const dispatch = useDispatch()
 
+  const searchText = useSelector(mainSelector.getSearchText)
+
+  const categoryData = useSelector(mainSelector.getCategoryValue)
+  const categoryStatus = useSelector(mainSelector.getCategoryStatus)
+
+  const catalogData = useSelector(mainSelector.getCatalogValue)
+  const catalogStatus = useSelector(mainSelector.getCatalogStatus)
+  const isCatalogFinish = useSelector(mainSelector.getCatalogIsFinish)
+
   const [currentCategory, setCurrentCategory] = useState({ id: 0, title: "Все" })
-  const [targetCategory, setTargetCategory] = useState(null)
 
   const [offset, setOffset] = useState(6)
 
@@ -50,24 +49,15 @@ const Catalog = ({
   useEffect(() => {
     dispatch(getCatalogAsync(currentCategory.id))
     setOffset(6)
-  }, [currentCategory])
+  }, [currentCategory, searchText])
 
   useEffect(() => {
     dispatch(getCategoryAsync())
-    dispatch(getTopSalesAsync())
-    dispatch(getCatalogAsync(currentCategory.id))
   }, [])
 
-  useEffect(() => {
-    dispatch(getCatalogAsync(currentCategory.id))
-  }, [searchText])
-
   const categoryClickHandler: React.EventHandler<any> = (e) => {
-    // console.log("🚀 ~ file: CatalogPage.tsx ~ line 47 ~ CatalogPage ~ e.target.innerText", e.target?.innerText)
-
     const categoryId = categoryData.find((item) => item?.title === e.target?.innerText)
     setCurrentCategory(categoryId)
-    setTargetCategory(e.target?.innerText)
   }
 
   return (
@@ -81,7 +71,7 @@ const Catalog = ({
         <section className="catalog">
           <h2 className="text-center">Каталог</h2>
 
-          {form && <SearchForm searchText={searchText} currentCategoryId={currentCategory.id} />}
+          {form && <SearchForm searchText={searchText} />}
 
           <ul className="catalog-categories nav justify-content-center">
             {categoryData.map((item) => (

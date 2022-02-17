@@ -7,10 +7,9 @@ import Preloader from "../../Preloader"
 
 interface IProps {
   searchText: string
-  currentCategoryId: number
 }
 
-const SearchForm = ({ searchText, currentCategoryId }: IProps) => {
+const SearchForm = ({ searchText }: IProps) => {
   const dispatch = useDispatch()
 
   const [searchInput, setSearchInput] = useState(searchText)
@@ -18,12 +17,6 @@ const SearchForm = ({ searchText, currentCategoryId }: IProps) => {
   useEffect(() => {
     setSearchInput(searchText)
   }, [searchText])
-
-  // useEffect(() => {
-  //   return () => {
-  //     dispatch(changeSeachText(""))
-  //   }
-  // }, [searchText])
 
   return (
     <form

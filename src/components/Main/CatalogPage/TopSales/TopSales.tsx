@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { Link, NavLink } from "react-router-dom"
-import { ICard, IStatus } from "../../../../store/mainSlice"
+import { getTopSalesAsync, ICard, IStatus } from "../../../../store/mainSlice"
 import * as mainSelector from "../../../../store/selectors"
 import { RootState } from "../../../../store/store"
 import Preloader from "../../Preloader"
 
-interface IProps {
-  topSalesStatus: IStatus
-  topSalesData: ICard[]
-}
+const TopSales = () => {
+  const dispatch = useDispatch()
+  const topSalesData = useSelector(mainSelector.getTopSalesValue)
+  const topSalesStatus = useSelector(mainSelector.getTopSalesStatus)
 
-const TopSales = ({ topSalesStatus, topSalesData }: IProps) => {
+  useEffect(() => {
+    dispatch(getTopSalesAsync())
+  }, [])
+
   return (
     <>
       {topSalesStatus === "loading" ? (
