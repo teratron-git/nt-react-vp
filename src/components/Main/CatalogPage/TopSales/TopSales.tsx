@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react"
-import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { Link, NavLink } from "react-router-dom"
-import { getTopSalesAsync, ICard, IStatus } from "../../../../store/mainSlice"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { NavLink } from "react-router-dom"
+import { getTopSalesAsync } from "../../../../store/mainSlice"
 import * as mainSelector from "../../../../store/selectors"
-import { RootState } from "../../../../store/store"
 import Preloader from "../../Preloader"
 
 const TopSales = () => {

@@ -6,7 +6,6 @@ import Order from "./Order"
 
 const CartPage = () => {
   const getCountOrders = useSelector(mainSelector.getCountOrders)
-  console.log("🚀 ~ file: CartPage.tsx ~ line 9 ~ CartPage ~ getCountOrders!!!!!!!!!!!!!!!!!!!!!!!!!!", getCountOrders)
   const [order, setOrder] = useState<Array<IProductInfoForCart>>(JSON.parse(localStorage.getItem("order")) || [])
   const dispatch = useDispatch()
 
@@ -16,6 +15,7 @@ const CartPage = () => {
 
     localStorage.removeItem("order")
     localStorage.setItem("order", JSON.stringify(newArr))
+
     setOrder(newArr)
     dispatch(changeCountOrders(JSON.parse(localStorage.getItem("order")).length))
   }

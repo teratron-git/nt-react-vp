@@ -1,28 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link, NavLink } from "react-router-dom"
-import {
-  changeSeachText,
-  getCatalogAsync,
-  getCatalogMoreAsync,
-  getCategoryAsync,
-  ICard,
-  ICategory,
-  IStatus,
-} from "../../../../store/mainSlice"
+import { getCatalogAsync, getCatalogMoreAsync, getCategoryAsync } from "../../../../store/mainSlice"
 import * as mainSelector from "../../../../store/selectors"
 import Preloader from "../../Preloader"
 import SearchForm from "../SearchForm"
-
-interface IProps {
-  catalogStatus: IStatus
-  catalogData: ICard[]
-  categoryStatus: IStatus
-  categoryData: ICategory[]
-  isCatalogFinish: boolean
-  searchText: string
-  form?: boolean
-}
 
 const Catalog = ({ form = false }) => {
   const dispatch = useDispatch()
@@ -34,6 +16,7 @@ const Catalog = ({ form = false }) => {
 
   const catalogData = useSelector(mainSelector.getCatalogValue)
   const catalogStatus = useSelector(mainSelector.getCatalogStatus)
+  const catalogStatusMore = useSelector(mainSelector.getCatalogStatusMore)
   const isCatalogFinish = useSelector(mainSelector.getCatalogIsFinish)
 
   const [currentCategory, setCurrentCategory] = useState({ id: 0, title: "Все" })
@@ -112,14 +95,17 @@ const Catalog = ({ form = false }) => {
           </div>
           <div className="text-center">
             {!isCatalogFinish ? (
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={moreClickHandler}
-                // disabled={Boolean(catalogStatus !== "success")}
-              >
-                Загрузить ещё
-              </button>
+              <>
+                {catalogStatusMore === "loading" ? <Preloader /> : null}
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={moreClickHandler}
+                  disabled={Boolean(catalogStatusMore === "loading")}
+                >
+                  Загрузить ещё
+                </button>
+              </>
             ) : null}
           </div>
         </section>

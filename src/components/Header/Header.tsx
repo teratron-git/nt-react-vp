@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { NavLink, useNavigate } from "react-router-dom"
 import { changeSeachText } from "../../store/mainSlice"
 import * as mainSelector from "../../store/selectors"
-import { RootState } from "../../store/store"
 
 const Header = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const getSearchText = useSelector(mainSelector.getSearchText)
-  const getCountOrders = useSelector(mainSelector.getCountOrders)
+  const countOrders = useSelector(mainSelector.getCountOrders)
 
   const [isSearchExpend, setIsSearchExpend] = useState(false)
   const [searchInput, setSearchInput] = useState(getSearchText)
-  const [countOrders, setCountOrders] = useState(getCountOrders)
-
-  useEffect(() => {
-    setCountOrders(JSON.parse(localStorage.getItem("order"))?.length)
-  }, [getCountOrders])
 
   const serchInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setSearchInput(e.target.value)
@@ -78,7 +72,7 @@ const Header = () => {
                     onClick={searchButtonClickHandler}
                   />
                   <div className="header-controls-pic header-controls-cart" onClick={cartClickHandler}>
-                    {countOrders ? <div className="header-controls-cart-full">{countOrders}</div> : null}
+                    {+countOrders ? <div className="header-controls-cart-full">{countOrders}</div> : null}
                     <div className="header-controls-cart-menu" />
                   </div>
                 </div>

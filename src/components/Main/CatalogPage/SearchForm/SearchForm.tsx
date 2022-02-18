@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { Link, NavLink } from "react-router-dom"
-import { changeSeachText, getCatalogAsync } from "../../../../store/mainSlice"
-import * as mainSelector from "../../../../store/selectors"
-import Preloader from "../../Preloader"
+import { useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
+import { changeSeachText } from "../../../../store/mainSlice"
 
 interface IProps {
   searchText: string

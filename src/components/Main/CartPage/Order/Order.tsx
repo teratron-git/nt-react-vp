@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Swal from "sweetalert2"
-import { changeCountOrders, setOrder, setOrderStatus } from "../../../../store/mainSlice"
+import { changeCountOrders, IProductInfoForCart, setOrder, setOrderStatus } from "../../../../store/mainSlice"
 import * as mainSelector from "../../../../store/selectors"
 import Preloader from "../../Preloader"
 
@@ -9,20 +9,17 @@ const Order = () => {
   const dispatch = useDispatch()
   const getOrderStatus = useSelector(mainSelector.getOrderStatus)
 
-  console.log("🚀 ~ file: Order.tsx ~ line 10 ~ Order ~ getOrderStatus", getOrderStatus)
-
   const [phone, setPhone] = useState("")
-  console.log("🚀 ~ file: Order.tsx ~ line 5 ~ Order ~ phone", phone)
   const [address, setAddress] = useState("")
-  console.log("🚀 ~ file: Order.tsx ~ line 7 ~ Order ~ address", address)
   const [isChecked, setIsChecked] = useState(false)
-  console.log("🚀 ~ file: Order.tsx ~ line 9 ~ Order ~ isChecked", isChecked)
-  const [status, setStatus] = useState(getOrderStatus)
-  console.log("🚀 ~ file: Order.tsx ~ line 19 ~ Order ~ status", status)
+
+  const [hasLocalStorageData, setHasLocalStorageData] = useState(null)
 
   useEffect(() => {
-    setStatus(getOrderStatus)
+    setHasLocalStorageData(!!JSON.parse(localStorage.getItem("order"))?.length)
+  }, [JSON.parse(localStorage.getItem("order"))?.length])
 
+  useEffect(() => {
     getOrderStatus === "success" || getOrderStatus === "error"
       ? Swal.fire({
           title: getOrderStatus === "success" ? "Заказ оформлен" : "Заказ не оформлен",
@@ -55,7 +52,7 @@ const Order = () => {
     setAddress(e.target.value)
   }
 
-  const chekedToogleHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const chekedToogleHandler: React.ChangeEventHandler<HTMLInputElement> = () => {
     setIsChecked(!isChecked)
   }
 
@@ -63,7 +60,7 @@ const Order = () => {
     e.preventDefault()
     const order = JSON.parse(localStorage.getItem("order")) || []
 
-    const body = order.map((item: any) => ({
+    const body = order.map((item: IProductInfoForCart) => ({
       id: item.id,
       price: item.price,
       count: item.amount,
@@ -74,9 +71,9 @@ const Order = () => {
 
   return (
     <>
-      {status === "loading" ? (
+      {getOrderStatus === "loading" ? (
         <Preloader />
-      ) : (
+      ) : hasLocalStorageData ? (
         <section className="order">
           <h2 className="text-center">Оформить заказ</h2>
           <div className="card" style={{ maxWidth: "30rem", margin: "0 auto" }}>
@@ -119,7 +116,7 @@ const Order = () => {
             </form>
           </div>
         </section>
-      )}
+      ) : null}
     </>
   )
 }

@@ -1,6 +1,18 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import axios from "axios"
-import { AppThunk, RootState } from "./store"
+import { RootState } from "./store"
+
+interface ISetOrderBody {
+  owner: {
+    phone: string
+    address: string
+  }
+  items: {
+    id: number
+    price: number
+    count: number
+  }
+}
 
 export interface ICard {
   id: number
@@ -59,6 +71,7 @@ interface IMainState {
   catalog: {
     value: ICard[]
     status: IStatus
+    statusMore: IStatus
     isFinish: boolean
   }
   productInfo: IProductInfo
@@ -81,6 +94,7 @@ const initialState: IMainState = {
   catalog: {
     value: [],
     status: "idle",
+    statusMore: "idle",
     isFinish: false,
   },
   productInfo: {
@@ -132,7 +146,7 @@ export const getProductInfoById = createAsyncThunk("main/getProductInfoById", as
   return response.data
 })
 
-export const setOrder = createAsyncThunk("main/setOrder", async (body: any, { dispatch }) => {
+export const setOrder = createAsyncThunk("main/setOrder", async (body: ISetOrderBody) => {
   axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*"
   const response = await axios.post(`http://localhost:7070/api/order`, body)
 
@@ -149,7 +163,6 @@ export const mainSlice = createSlice({
     changeCountOrders: (state, action: PayloadAction<string>) => {
       state.countOrders = action.payload
     },
-
     setOrderStatus: (state, action: PayloadAction<IStatus>) => {
       state.order.status = action.payload
     },
@@ -197,13 +210,13 @@ export const mainSlice = createSlice({
       })
 
       .addCase(getCatalogMoreAsync.pending, (state) => {
-        state.catalog.status = "loading"
+        state.catalog.statusMore = "loading"
       })
       .addCase(getCatalogMoreAsync.rejected, (state) => {
-        state.catalog.status = "error"
+        state.catalog.statusMore = "error"
       })
       .addCase(getCatalogMoreAsync.fulfilled, (state, action: PayloadAction<Array<ICard>>) => {
-        state.catalog.status = "success"
+        state.catalog.statusMore = "success"
         state.catalog.isFinish = action.payload.length !== 6
         state.catalog.value.push(...action.payload)
       })
@@ -217,7 +230,6 @@ export const mainSlice = createSlice({
         state.productInfo.value = null
       })
       .addCase(getProductInfoById.fulfilled, (state, action: PayloadAction<IProductInfoForCart>) => {
-        console.log("🚀 ~ file: mainSlice.ts ~ line 213 ~ .addCase ~ action", action)
         state.productInfo.status = "success"
         state.productInfo.value = { ...action.payload }
       })
@@ -228,10 +240,8 @@ export const mainSlice = createSlice({
       .addCase(setOrder.rejected, (state) => {
         state.order.status = "error"
       })
-      .addCase(setOrder.fulfilled, (state, action) => {
+      .addCase(setOrder.fulfilled, (state) => {
         state.order.status = "success"
-        console.log("🚀 ~ file: mainSlice.ts ~ line 227 ~ .addCase ~ state", state)
-        console.log("🚀 ~ file: mainSlice.ts ~ line 227 ~ .addCase ~ action", action)
         localStorage.removeItem("order")
       })
   },
