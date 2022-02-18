@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { Link, NavLink } from "react-router-dom"
 import { getCatalogAsync, getCatalogMoreAsync, getCategoryAsync } from "../../../../store/mainSlice"
 import * as mainSelector from "../../../../store/selectors"
+import Error from "../../Error"
 import Preloader from "../../Preloader"
 import SearchForm from "../SearchForm"
 
@@ -50,7 +51,7 @@ const Catalog = ({ form = false }) => {
           <h2 className="text-center">Каталог</h2>
           <Preloader />
         </section>
-      ) : (
+      ) : catalogStatus !== "error" && categoryStatus !== "error" ? (
         <section className="catalog">
           <h2 className="text-center">Каталог</h2>
 
@@ -109,6 +110,8 @@ const Catalog = ({ form = false }) => {
             ) : null}
           </div>
         </section>
+      ) : (
+        <Error />
       )}
     </>
   )

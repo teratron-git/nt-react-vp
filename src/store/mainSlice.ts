@@ -79,10 +79,9 @@ interface IMainState {
     status: IStatus
   }
 }
-
 const initialState: IMainState = {
   searchText: "",
-  countOrders: null,
+  countOrders: JSON.parse(localStorage.getItem("order"))?.length,
   topSales: {
     value: [],
     status: "idle",

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { changeCountOrders, getProductInfoById, IProductInfoForCart } from "../../../store/mainSlice"
 import * as mainSelector from "../../../store/selectors"
+import Error from "../Error"
 import Preloader from "../Preloader"
 
 const ProductInfoPage = () => {
@@ -53,7 +54,7 @@ const ProductInfoPage = () => {
     <>
       {productInfoStatus === "loading" ? (
         <Preloader />
-      ) : (
+      ) : productInfoStatus !== "error" ? (
         <section className="catalog-item">
           <h2 className="text-center">{productInfo?.title}</h2>
           <div className="row">
@@ -135,6 +136,8 @@ const ProductInfoPage = () => {
             </div>
           </div>
         </section>
+      ) : (
+        <Error />
       )}
     </>
   )

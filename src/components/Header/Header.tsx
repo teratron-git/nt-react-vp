@@ -9,9 +9,14 @@ const Header = () => {
   const navigate = useNavigate()
   const getSearchText = useSelector(mainSelector.getSearchText)
   const countOrders = useSelector(mainSelector.getCountOrders)
+  console.log("🚀 ~ file: Header.tsx ~ line 12 ~ Header ~ countOrders", countOrders)
 
   const [isSearchExpend, setIsSearchExpend] = useState(false)
   const [searchInput, setSearchInput] = useState(getSearchText)
+
+  useEffect(() => {
+    console.log("🚀 ~ file: Header.tsx ~ line 19 ~ useEffect ~ countOrders", countOrders)
+  }, [countOrders])
 
   const serchInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setSearchInput(e.target.value)
