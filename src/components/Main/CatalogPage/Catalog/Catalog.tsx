@@ -98,14 +98,19 @@ const Catalog = ({ form = false }) => {
             {!isCatalogFinish ? (
               <>
                 {catalogStatusMore === "loading" ? <Preloader /> : null}
-                <button
-                  type="button"
-                  className="btn btn-outline-primary"
-                  onClick={moreClickHandler}
-                  disabled={Boolean(catalogStatusMore === "loading")}
-                >
-                  Загрузить ещё
-                </button>
+
+                {catalogStatusMore !== "error" ? (
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={moreClickHandler}
+                    disabled={Boolean(catalogStatusMore === "loading")}
+                  >
+                    Загрузить ещё
+                  </button>
+                ) : (
+                  <Error />
+                )}
               </>
             ) : null}
           </div>
