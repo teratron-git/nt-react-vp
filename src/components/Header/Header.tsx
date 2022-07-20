@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { NavLink, useNavigate } from "react-router-dom"
 import { changeSeachText } from "../../store/mainSlice"
@@ -7,16 +7,12 @@ import * as mainSelector from "../../store/selectors"
 const Header = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
   const getSearchText = useSelector(mainSelector.getSearchText)
   const countOrders = useSelector(mainSelector.getCountOrders)
-  console.log("🚀 ~ file: Header.tsx ~ line 12 ~ Header ~ countOrders", countOrders)
 
   const [isSearchExpend, setIsSearchExpend] = useState(false)
   const [searchInput, setSearchInput] = useState(getSearchText)
-
-  useEffect(() => {
-    console.log("🚀 ~ file: Header.tsx ~ line 19 ~ useEffect ~ countOrders", countOrders)
-  }, [countOrders])
 
   const serchInputChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setSearchInput(e.target.value)
